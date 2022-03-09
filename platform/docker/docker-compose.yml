@@ -1,0 +1,16 @@
+version: '3'
+
+volumes:
+  user-data:
+
+services:
+  db_oauth_service:
+    image: postgres:13-alpine
+    restart: always
+    container_name: pg-oauth
+    environment:
+      POSTGRES_DB: oauth_db
+      POSTGRES_USER: oauth_user
+      POSTGRES_PASSWORD: oauth_pwd
+    ports:
+      - "5432:5432"
