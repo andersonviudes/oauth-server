@@ -1,0 +1,53 @@
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: {{APP-NAME}}
+  namespace: native-ms
+spec:
+  targetRef:
+    kind: Deployment
+    name: {{APP-NAME}}
+    apiVersion: apps/v1
+  updatePolicy:
+    updateMode: Auto
+  resourcePolicy:
+    containerPolicies:
+      - containerName: {{APP-NAME}}
+        mode: Auto
+        controlledResources:
+          - cpu
+          - memory
+        minAllowed:
+          cpu: 64m
+          memory: 256Mi
+        maxAllowed:
+          cpu: 128m
+          memory: 812Mi
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{APP-NAME}}
+  namespace: native-ms
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: {{APP-NAME}}
+    apiVersion: apps/v1
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageValue: 120m
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageValue: 800Mi

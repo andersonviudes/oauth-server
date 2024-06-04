@@ -48,7 +48,7 @@ These additional references should also help you:
 
 A aplicação foi desenvolvida usando os princípios de proposto por Alistair Cockburn como pode ser visto no site:
 
-https://softwarecampament.wordpress.com/portsadapters/
+https://netflixtechblog.com/ready-for-changes-with-hexagonal-architecture-b315ec967749
 
 O objetivo é sempre proteger o domain de mudanças em componentes que não são centrais da aplicação.
 

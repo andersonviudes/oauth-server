@@ -9,5 +9,11 @@ tasks.withType<BootJar> {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation(project(":domain"))
+
+    implementation("org.springframework.boot:spring-boot-starter-web"){
+        exclude("org.springframework.boot",  "spring-boot-starter-tomcat")
+    }
+
+    implementation("org.springframework.boot:spring-boot-starter-jetty")
 }

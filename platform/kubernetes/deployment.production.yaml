@@ -1,0 +1,142 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: load-balancer-oauth2-server-deployment
+  name: oauth2-server
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: load-balancer-oauth2-server-deployment
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: load-balancer-oauth2-server-deployment
+    spec:
+      containers:
+      - image: $IMAGE
+        name: oauth2-server
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        resources:
+          limits:
+            cpu: 512m
+            memory: 712Mi
+          requests:
+            cpu: 256m
+            memory: 512Mi
+        env:
+          - name: ENVIRONMENT
+            value: "production"
+          - name: SPRING_PROFILES_ACTIVE
+            value: "production"
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: oauth
+                key: oauth-db-endpoint
+          - name: DB_PORT
+            valueFrom:
+              secretKeyRef:
+                name: oauth
+                key: oauth-db-port
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: oauth
+                key: oauth-db-user
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: oauth
+                key: oauth-db-passwd
+          - name: KAFKA_PRIMARY_BOOTSTRAP_SERVERS
+            valueFrom:
+              secretKeyRef:
+                name: kafka
+                key: kafka-endpoint
+          - name: KAFKA_PRIMARY_KEY
+            valueFrom:
+              secretKeyRef:
+                name: kafka
+                key: kafka-key
+          - name: KAFKA_PRIMARY_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: kafka
+                key: kafka-secret
+          - name: KAFKA_PRIMARY_REQUEST_TIMEOUT_MS
+            value: "20000"
+          - name: KAFKA_PRIMARY_RETRY_BACKOFF_MS
+            value: "500"
+          - name: KAFKA_PRIMARY_SCHEMA_REGISTRY_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: kafka
+                key: kafka-schema-registry-endpoint
+          - name: KAFKA_PRIMARY_SCHEMA_REGISTRY_KEY
+            valueFrom:
+              secretKeyRef:
+                name: kafka
+                key: kafka-schema-registry-key
+          - name: KAFKA_PRIMARY_SCHEMA_REGISTRY_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: kafka
+                key: kafka-schema-registry-secret
+          - name: KAFKA_SECURITY_PROTOCOL
+            value: "SASL_SSL"
+          - name: SERVER_PORT
+            value: "8080"
+          - name: TOKEN_EXPIRATION_TIME
+            value: "300000"
+          - name: REVENUE_URL_BASE
+            value: "https://www.receitaws.com.br/v1/cnpj"
+          - name: NEW_RELIC_APP_NAME
+            value: "oauth2-server"
+          - name: NEWRELIC_API_KEY
+            value: "68167a807ad0b12c8ad4ea8887389001FFFFNRAL"
+          - name: NEWRELIC_ACCOUNT_ID
+            value: "3502814"
+          - name: NEW_RELIC_AGENT_ENABLED
+            value: "true"
+          - name: AES_KEY
+            valueFrom:
+              secretKeyRef:
+                name: oauth
+                key: aes_key
+          - name: AES_IV
+            valueFrom:
+              secretKeyRef:
+                name: oauth
+                key: aes_iv
+        livenessProbe:
+          failureThreshold: 120
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        startupProbe:
+          failureThreshold: 120
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1

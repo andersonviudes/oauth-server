@@ -36,13 +36,13 @@ create table permission_role
 create table "user"
 (
     id                  UUID primary key,
-    name                varchar(24) unique not null,
-    pwd                 varchar(255)       not null,
-    email               varchar(255)       not null,
-    enabled             boolean            not null default false,
-    account_expired     boolean            not null default false,
-    credentials_expired boolean            not null default false,
-    account_locked      boolean            not null default false
+    name                varchar(225) unique not null,
+    pwd                 varchar(255)        not null,
+    email               varchar(255)        not null,
+    enabled             boolean             not null default false,
+    account_expired     boolean             not null default false,
+    credentials_expired boolean             not null default false,
+    account_locked      boolean             not null default false
 );
 
 create table role_user

@@ -12,3 +12,6 @@ project(":persistence").projectDir = File("secondary/persistence")
 
 include("rest")
 project(":rest").projectDir = File("primary/rest")
+
+include("consumer")
+project(":consumer").projectDir = File("primary/consumer")
